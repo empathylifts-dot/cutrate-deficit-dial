@@ -30,12 +30,32 @@ The whole point of your CutRate is to find the deficit you can repeat without th
 Day 1 job: hit calories and protein. That is it.
 ```
 
-## Immediate SMS
+## SMS Automation
 
-Only send if the person checked `Text me the Protocol` and submitted a phone number.
+Only send when the person checked `Text me the Protocol` and submitted a phone number.
+
+### Immediate SMS
 
 ```text
-Your CutRate is set. Run the target for 7 days before adjusting. Day 1 job: hit calories and protein. Do not panic-adjust off one weigh-in.
+Your CutRate is set: {{contact.cutrate__weekly_rate}} lb/week. Day 1 job: hit calories and protein. Run 7 days before adjusting. Do not panic-adjust off one weigh-in. Reply STOP to opt out.
+```
+
+### Day 2 SMS
+
+```text
+CutRate check-in: the first 48 hours are mostly noise. Water, sodium, soreness, sleep. Stay on target today.
+```
+
+### Day 4 SMS
+
+```text
+Day 4 is where people overcorrect. If weight is flat or hunger is loud, do not slash calories. Hold your CutRate long enough to read the trend.
+```
+
+### Day 7 SMS
+
+```text
+Day 7: compare your average, not high vs low. If it moved near your CutRate, keep going. Reply with your 7-day average + CutRate if you want my read.
 ```
 
 ## Day 2 Email

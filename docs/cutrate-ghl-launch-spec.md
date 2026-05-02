@@ -17,7 +17,7 @@ Paid bridge: Performance Protected Cut
 Primary URL target:
 
 ```text
-https://cutrate.foreverhabits.com
+https://mycutrate.com
 ```
 
 Fallback URL:
@@ -132,14 +132,14 @@ CutRate - Referral = eosORpe52Ze8wa7XFgVo
 
 Direct API intake is live-ready through `netlify/functions/submit-lead.js`. A GHL workflow is still useful for fulfillment once the contact/opportunity exists.
 
-The Netlify function also has a Protocol delivery switch ready:
+The Netlify function also has a Protocol delivery switch:
 
 ```text
 CUTRATE_PROTOCOL_DELIVERY_ENABLED=true
 CUTRATE_PROTOCOL_SMS_ENABLED=true
 ```
 
-Leave both off until the outbound email/SMS sequence is approved. When enabled, the function sends the immediate CutRate Protocol email, schedules day 2, day 4, and day 7 follow-up emails, and sends the immediate SMS only when the person checked `Text me the Protocol` and submitted a phone number.
+Live production has both switches on. When enabled, the function sends the immediate CutRate Protocol email, schedules day 2, day 4, and day 7 follow-up emails, and sends the SMS sequence only when the person checked `Text me the Protocol` and submitted a phone number.
 
 Suggested workflow name:
 
@@ -156,7 +156,7 @@ Contact Tag Added: offer:cutrate-protocol
 Actions:
 
 1. Send the CutRate Protocol email immediately.
-2. If tag `sms-optin:cutrate-protocol` is present and phone is present, send the Protocol SMS.
+2. If tag `sms-optin:cutrate-protocol` is present and phone is present, send the Protocol SMS sequence.
 3. If tag `intent:coach-audit` is present, create an internal notification or task for Ryan.
 4. Wait 1 day, then start the first-week follow-up sequence.
 
@@ -168,10 +168,13 @@ Email immediately:
 Subject: Your CutRate is set
 ```
 
-SMS immediately when opted in:
+SMS sequence when opted in:
 
 ```text
-Just sent your CutRate Protocol. Run the target for 7 days before adjusting. The first read is the trend, not one random weigh-in.
+Immediate: Your CutRate is set. Run the target for 7 days before adjusting.
+Day 2: First 48 hours are mostly noise.
+Day 4: Do not overcorrect.
+Day 7: Read the average, then adjust small.
 ```
 
 Internal notification when audit requested:

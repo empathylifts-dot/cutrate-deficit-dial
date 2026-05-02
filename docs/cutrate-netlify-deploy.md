@@ -9,14 +9,19 @@ https://cutrate-deficit-dial.netlify.app
 Target custom domain:
 
 ```text
-https://cutrate.foreverhabits.com
+https://mycutrate.com
 ```
 
 Netlify has the custom domain attached. DNS is hosted at GoDaddy and still needs:
 
 ```text
+Type: A
+Name: @
+Value: 75.2.60.5
+TTL: default
+
 Type: CNAME
-Name: cutrate
+Name: www
 Value: cutrate-deficit-dial.netlify.app
 TTL: default
 ```
@@ -60,11 +65,11 @@ GHL_PRIVATE_TOKEN
 
 Netlify free account blocked secret-scoped env vars during setup, so the current variable was created as a normal site env var. It is still server-side and not exposed in browser JavaScript, but it is visible inside Netlify project settings.
 
-Protocol delivery env vars are present in the code but should stay off until outbound messages are approved:
+Protocol delivery env vars:
 
 ```text
-CUTRATE_PROTOCOL_DELIVERY_ENABLED=false
-CUTRATE_PROTOCOL_SMS_ENABLED=false
+CUTRATE_PROTOCOL_DELIVERY_ENABLED=true
+CUTRATE_PROTOCOL_SMS_ENABLED=true
 ```
 
 ## Live QA

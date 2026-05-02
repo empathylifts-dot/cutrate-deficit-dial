@@ -275,6 +275,18 @@ function buildProtocolEmail(payload, day = 0) {
   return emails[day];
 }
 
+function buildProtocolSms(payload, day = 0) {
+  const cutRate = payload.cutRate ? `${payload.cutRate} lb/week` : "your CutRate";
+  const messages = {
+    0: `Your CutRate is set: ${cutRate}. Day 1 job: hit calories and protein. Run 7 days before adjusting. Do not panic-adjust off one weigh-in. Reply STOP to opt out.`,
+    2: "CutRate check-in: the first 48 hours are mostly noise. Water, sodium, soreness, sleep. Stay on target today.",
+    4: "Day 4 is where people overcorrect. If weight is flat or hunger is loud, do not slash calories. Hold your CutRate long enough to read the trend.",
+    7: "Day 7: compare your average, not high vs low. If it moved near your CutRate, keep going. Reply with your 7-day average + CutRate if you want my read.",
+  };
+
+  return messages[day];
+}
+
 function getScheduledTimestamp(daysFromNow) {
   const nowSeconds = Math.floor(Date.now() / 1000);
   return nowSeconds + daysFromNow * 24 * 60 * 60;
@@ -313,6 +325,7 @@ async function ghlFetch(path, config, options = {}) {
 async function sendProtocolMessage(config, body) {
   return ghlFetch("/conversations/messages", config, {
     method: "POST",
+    headers: { Version: "2021-04-15" },
     body: JSON.stringify(body),
   });
 }
@@ -349,16 +362,18 @@ async function maybeSendProtocolSequence(payload, contactId, config) {
   }
 
   if (delivery.smsEnabled && payload.wantsTextReminder && payload.phone) {
-    try {
-      const result = await sendProtocolMessage(config, {
-        type: "SMS",
-        contactId,
-        message:
-          "Your CutRate is set. Run the target for 7 days before adjusting. Day 1 job: hit calories and protein. Do not panic-adjust off one weigh-in.",
-      });
-      sent.push({ type: "SMS", day: 0, id: result.messageId || result.id || "" });
-    } catch (error) {
-      errors.push({ type: "SMS", day: 0, error: error.message });
+    for (const item of emailSchedule) {
+      try {
+        const result = await sendProtocolMessage(config, {
+          type: "SMS",
+          contactId,
+          message: buildProtocolSms(payload, item.day),
+          ...(item.scheduledTimestamp ? { scheduledTimestamp: item.scheduledTimestamp } : {}),
+        });
+        sent.push({ type: "SMS", day: item.day, id: result.messageId || result.id || "" });
+      } catch (error) {
+        errors.push({ type: "SMS", day: item.day, error: error.message });
+      }
     }
   }
 
