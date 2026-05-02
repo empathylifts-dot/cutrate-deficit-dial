@@ -376,7 +376,7 @@ function renderResult() {
       <div class="copy-panel">
         <h3>You may be thinking "this seems like a lot of calories".</h3>
         <p>If you have been cutting hard and still falling off, this is usually the loop: calories drop too low, training feels flat, hunger climbs, energy dips, and the weekend erases the deficit.</p>
-        <p>The goal is not the lowest calorie number. The goal is the CutRate you can actually hold.</p>
+        <p>The right CutRate is the one you can actually hold.</p>
       </div>
 
       ${renderWarnings(result.warnings)}
@@ -416,7 +416,7 @@ function renderLeadCapture() {
       <h2>Get your CutRate Protocol</h2>
       <p>I'm sure you know by now that having a set of macros to hit is just the start.</p>
       <p>What you need now is the next 7-14 days mapped out so you can dial in this deficit, know what to track, what to ignore, what to pay attention to, and when to not overcorrect and make adjustments that break everything.</p>
-      <p>Insert your email or phone and I'll toss it over.</p>
+      <p>Insert your email or phone and I'll send over my FREE 7-Day CutRate Protocol.</p>
       <div class="field-stack">
         <div class="field">
           <label for="firstName">First name</label>
@@ -460,8 +460,8 @@ function renderSuccess() {
     <section class="screen">
       <div class="success-panel">
         <p class="eyebrow">Saved</p>
-        <h1>Your Deficit Dial is set.</h1>
-        <p>Run your targets for 7 days. Track the trend. Do not panic-adjust after one weigh-in.</p>
+        <h1>Your CutRate Protocol is sent.</h1>
+        <p>Do not panic-adjust after one weigh-in. Follow the protocol. I'll be in touch next week.</p>
       </div>
 
       <div class="copy-panel">
