@@ -119,6 +119,13 @@ CutRate - Intent Score = 3mkVfzMLkY5PT8ADhi16
 CutRate - SMS Protocol Opt-In = Xc29eCtEMjGyy8VIKQr0
 CutRate - Coach Audit Requested = DQIHEYni9Wjo8LTIwxIo
 CutRate - Payload Snapshot = Fa8L19Uw20h4NnsUiYHZ
+CutRate - Submitted At = QNMIDwZ67UOeFDZ1mlmn
+CutRate - Share URL = ppENpXgsSMPhMloYvDaM
+CutRate - Page URL = HQCyrObsfyklxQ4yUkmL
+CutRate - UTM Source = UHgsedrRPD2YpeuByTEq
+CutRate - UTM Medium = YBP7BI9xoIenSMGi1Vt3
+CutRate - UTM Campaign = pCuVYWeWevK89trnx9sC
+CutRate - Referral = eosORpe52Ze8wa7XFgVo
 ```
 
 ## GHL Workflow

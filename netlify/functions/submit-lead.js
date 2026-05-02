@@ -22,6 +22,13 @@ const DEFAULT_GHL = {
     smsOptIn: "Xc29eCtEMjGyy8VIKQr0",
     coachAudit: "DQIHEYni9Wjo8LTIwxIo",
     payloadSnapshot: "Fa8L19Uw20h4NnsUiYHZ",
+    submittedAt: "QNMIDwZ67UOeFDZ1mlmn",
+    shareUrl: "ppENpXgsSMPhMloYvDaM",
+    pageUrl: "HQCyrObsfyklxQ4yUkmL",
+    utmSource: "UHgsedrRPD2YpeuByTEq",
+    utmMedium: "YBP7BI9xoIenSMGi1Vt3",
+    utmCampaign: "pCuVYWeWevK89trnx9sC",
+    referral: "eosORpe52Ze8wa7XFgVo",
   },
 };
 
@@ -83,6 +90,13 @@ function getGhlConfig() {
       smsOptIn: getEnv("GHL_FIELD_SMS_OPT_IN", DEFAULT_GHL.fields.smsOptIn),
       coachAudit: getEnv("GHL_FIELD_COACH_AUDIT", DEFAULT_GHL.fields.coachAudit),
       payloadSnapshot: getEnv("GHL_FIELD_PAYLOAD_SNAPSHOT", DEFAULT_GHL.fields.payloadSnapshot),
+      submittedAt: getEnv("GHL_FIELD_SUBMITTED_AT", DEFAULT_GHL.fields.submittedAt),
+      shareUrl: getEnv("GHL_FIELD_SHARE_URL", DEFAULT_GHL.fields.shareUrl),
+      pageUrl: getEnv("GHL_FIELD_PAGE_URL", DEFAULT_GHL.fields.pageUrl),
+      utmSource: getEnv("GHL_FIELD_UTM_SOURCE", DEFAULT_GHL.fields.utmSource),
+      utmMedium: getEnv("GHL_FIELD_UTM_MEDIUM", DEFAULT_GHL.fields.utmMedium),
+      utmCampaign: getEnv("GHL_FIELD_UTM_CAMPAIGN", DEFAULT_GHL.fields.utmCampaign),
+      referral: getEnv("GHL_FIELD_REFERRAL", DEFAULT_GHL.fields.referral),
     },
   };
 }
@@ -175,6 +189,13 @@ function buildCustomFields(payload, fields) {
     { id: fields.smsOptIn, value: yesNo(payload.wantsTextReminder) },
     { id: fields.coachAudit, value: yesNo(payload.wantsCoachAudit) },
     { id: fields.payloadSnapshot, value: getPayloadSnapshot(payload) },
+    { id: fields.submittedAt, value: payload.submittedAt || payload.timestamp || "" },
+    { id: fields.shareUrl, value: payload.shareUrl || "" },
+    { id: fields.pageUrl, value: payload.pageUrl || "" },
+    { id: fields.utmSource, value: payload.utm_source || "" },
+    { id: fields.utmMedium, value: payload.utm_medium || "" },
+    { id: fields.utmCampaign, value: payload.utm_campaign || "" },
+    { id: fields.referral, value: payload.referral || "" },
   ];
 
   return values.filter((field) => field.id);

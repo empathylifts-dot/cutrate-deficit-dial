@@ -22,6 +22,13 @@ intentTier -> CutRate - Intent Tier
 intentScore -> CutRate - Intent Score
 wantsTextReminder -> CutRate - SMS Protocol Opt-In
 wantsCoachAudit -> CutRate - Coach Audit Requested
+submittedAt -> CutRate - Submitted At
+shareUrl -> CutRate - Share URL
+pageUrl -> CutRate - Page URL
+utm_source -> CutRate - UTM Source
+utm_medium -> CutRate - UTM Medium
+utm_campaign -> CutRate - UTM Campaign
+referral -> CutRate - Referral
 payload snapshot -> CutRate - Payload Snapshot
 ```
 
