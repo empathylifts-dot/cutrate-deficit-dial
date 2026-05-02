@@ -132,6 +132,15 @@ CutRate - Referral = eosORpe52Ze8wa7XFgVo
 
 Direct API intake is live-ready through `netlify/functions/submit-lead.js`. A GHL workflow is still useful for fulfillment once the contact/opportunity exists.
 
+The Netlify function also has a Protocol delivery switch ready:
+
+```text
+CUTRATE_PROTOCOL_DELIVERY_ENABLED=true
+CUTRATE_PROTOCOL_SMS_ENABLED=true
+```
+
+Leave both off until the outbound email/SMS sequence is approved. When enabled, the function sends the immediate CutRate Protocol email, schedules day 2, day 4, and day 7 follow-up emails, and sends the immediate SMS only when the person checked `Text me the Protocol` and submitted a phone number.
+
 Suggested workflow name:
 
 ```text

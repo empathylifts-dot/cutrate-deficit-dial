@@ -101,6 +101,13 @@ function getGhlConfig() {
   };
 }
 
+function getProtocolDeliveryConfig() {
+  return {
+    enabled: process.env.CUTRATE_PROTOCOL_DELIVERY_ENABLED === "true",
+    smsEnabled: process.env.CUTRATE_PROTOCOL_SMS_ENABLED === "true",
+  };
+}
+
 function toNumber(value) {
   const number = Number(value);
   return Number.isFinite(number) ? number : "";
@@ -201,6 +208,78 @@ function buildCustomFields(payload, fields) {
   return values.filter((field) => field.id);
 }
 
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function buildProtocolEmail(payload, day = 0) {
+  const firstName = escapeHtml(payload.firstName || "there");
+  const cutRate = escapeHtml(payload.cutRate || "");
+  const zone = escapeHtml(payload.zone || "");
+  const calories = escapeHtml(payload.calories || "");
+  const macros = escapeHtml(getMacrosSummary(payload));
+
+  const emails = {
+    0: {
+      subject: "Your CutRate is set",
+      html: `
+        <p>Hey ${firstName},</p>
+        <p>Your Deficit Dial is set.</p>
+        <p><strong>CutRate:</strong> ${cutRate} lb/week<br>
+        <strong>Zone:</strong> ${zone}<br>
+        <strong>Calories:</strong> ${calories}<br>
+        <strong>Macros:</strong> ${macros}</p>
+        <p>Here is the first rule: do not adjust after one weigh-in.</p>
+        <p>Run the target for 7 days. Weigh in daily if you can, then look at the weekly trend. One high morning does not mean the plan failed. One low morning does not mean you should cut harder.</p>
+        <p>The whole point of your CutRate is to find the deficit you can repeat without the rebound loop: flat training, hunger spikes, low energy, and the weekend erasing everything.</p>
+        <p><strong>Day 1 job:</strong> hit calories and protein. That is it.</p>
+      `,
+    },
+    2: {
+      subject: "The first 48 hours are not the trend",
+      html: `
+        <p>Hey ${firstName},</p>
+        <p>Scale jumps in the first couple days are usually noise.</p>
+        <p>More carbs, sodium, a hard lift, poor sleep, soreness, a later dinner. Any of those can move the scale without meaning fat gain.</p>
+        <p>Stay on the target. Hit protein. Keep steps normal. Do not try to make up for a random weigh-in by slashing calories.</p>
+      `,
+    },
+    4: {
+      subject: "This is where people usually overcorrect",
+      html: `
+        <p>Hey ${firstName},</p>
+        <p>Around day 4, most people start negotiating.</p>
+        <p>If weight is down, they want to cut harder. If weight is flat, they want to cut harder. If hunger is up, they assume the plan is working and still cut harder.</p>
+        <p>That is the rebound setup.</p>
+        <p>Your job is to hold the CutRate long enough to read the trend. If training is already feeling flat, that is data too.</p>
+      `,
+    },
+    7: {
+      subject: "Now read the trend",
+      html: `
+        <p>Hey ${firstName},</p>
+        <p>Now you have enough signal to make a smarter adjustment.</p>
+        <p>Do not compare your highest weigh-in to your lowest weigh-in. Compare the average.</p>
+        <p>If the average is moving near your CutRate, keep going. If nothing moved and tracking was honest, adjust small. If you were starving, flat, and already thinking about bailing, the issue is not discipline. The issue is the setup.</p>
+        <p>This is where Performance Protected Cut starts: keeping the cut moving without turning it into the rebound loop again.</p>
+        <p>Reply with your 7-day average and CutRate. I will tell you what signal I would look at first.</p>
+      `,
+    },
+  };
+
+  return emails[day];
+}
+
+function getScheduledTimestamp(daysFromNow) {
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  return nowSeconds + daysFromNow * 24 * 60 * 60;
+}
+
 async function ghlFetch(path, config, options = {}) {
   const ghlResponse = await fetch(`${GHL_API_BASE}${path}`, {
     ...options,
@@ -229,6 +308,61 @@ async function ghlFetch(path, config, options = {}) {
   }
 
   return body;
+}
+
+async function sendProtocolMessage(config, body) {
+  return ghlFetch("/conversations/messages", config, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+async function maybeSendProtocolSequence(payload, contactId, config) {
+  const delivery = getProtocolDeliveryConfig();
+  if (!delivery.enabled) {
+    return { enabled: false };
+  }
+
+  const sent = [];
+  const errors = [];
+  const emailSchedule = [
+    { day: 0 },
+    { day: 2, scheduledTimestamp: getScheduledTimestamp(2) },
+    { day: 4, scheduledTimestamp: getScheduledTimestamp(4) },
+    { day: 7, scheduledTimestamp: getScheduledTimestamp(7) },
+  ];
+
+  for (const item of emailSchedule) {
+    const email = buildProtocolEmail(payload, item.day);
+    try {
+      const result = await sendProtocolMessage(config, {
+        type: "Email",
+        contactId,
+        subject: email.subject,
+        html: email.html,
+        ...(item.scheduledTimestamp ? { scheduledTimestamp: item.scheduledTimestamp } : {}),
+      });
+      sent.push({ type: "Email", day: item.day, id: result.messageId || result.id || "" });
+    } catch (error) {
+      errors.push({ type: "Email", day: item.day, error: error.message });
+    }
+  }
+
+  if (delivery.smsEnabled && payload.wantsTextReminder && payload.phone) {
+    try {
+      const result = await sendProtocolMessage(config, {
+        type: "SMS",
+        contactId,
+        message:
+          "Your CutRate is set. Run the target for 7 days before adjusting. Day 1 job: hit calories and protein. Do not panic-adjust off one weigh-in.",
+      });
+      sent.push({ type: "SMS", day: 0, id: result.messageId || result.id || "" });
+    } catch (error) {
+      errors.push({ type: "SMS", day: 0, error: error.message });
+    }
+  }
+
+  return { enabled: true, sent, errors };
 }
 
 async function syncLeadToGhl(payload) {
@@ -276,10 +410,13 @@ async function syncLeadToGhl(payload) {
     }),
   });
 
+  const protocolDelivery = await maybeSendProtocolSequence(payload, contact.id, config);
+
   return {
     contactId: contact.id,
     opportunityId: opportunityResult.opportunity?.id || "",
     stage: stage.name,
+    protocolDelivery,
   };
 }
 

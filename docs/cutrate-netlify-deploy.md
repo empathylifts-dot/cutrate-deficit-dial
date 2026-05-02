@@ -60,6 +60,13 @@ GHL_PRIVATE_TOKEN
 
 Netlify free account blocked secret-scoped env vars during setup, so the current variable was created as a normal site env var. It is still server-side and not exposed in browser JavaScript, but it is visible inside Netlify project settings.
 
+Protocol delivery env vars are present in the code but should stay off until outbound messages are approved:
+
+```text
+CUTRATE_PROTOCOL_DELIVERY_ENABLED=false
+CUTRATE_PROTOCOL_SMS_ENABLED=false
+```
+
 ## Live QA
 
 Tested on 2026-05-01:
