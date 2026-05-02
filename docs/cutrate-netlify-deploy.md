@@ -6,6 +6,21 @@ Live URL:
 https://cutrate-deficit-dial.netlify.app
 ```
 
+Target custom domain:
+
+```text
+https://cutrate.foreverhabits.com
+```
+
+Netlify has the custom domain attached. DNS is hosted at GoDaddy and still needs:
+
+```text
+Type: CNAME
+Name: cutrate
+Value: cutrate-deficit-dial.netlify.app
+TTL: default
+```
+
 Netlify project:
 
 ```text
@@ -55,4 +70,33 @@ GHL contact created: yes
 GHL opportunity created: yes
 Pipeline stage: SMS Opt-In
 Fake test record cleanup: GHL delete API returned 200
+```
+
+Full stage sweep tested:
+
+```text
+New CutRate Lead: pass
+SMS Opt-In: pass
+Coach Audit Requested: pass
+Protocol Requested: pass
+Calories custom field: pass
+CutRate custom field: pass
+UTM custom fields: pass
+Fake test records cleanup: pass
+```
+
+Browser UI lead form tested:
+
+```text
+Live page loaded: pass
+Step 1 body inputs: pass
+Step 2 training inputs: pass
+Step 3 goal inputs: pass
+Lead form submission: pass
+GHL contact tags: pass
+GHL opportunity in CutRate Protocol pipeline: pass
+GHL stage: New CutRate Lead
+GHL custom fields: pass
+UTM attribution fields: pass
+Fake browser QA record cleanup: pass
 ```

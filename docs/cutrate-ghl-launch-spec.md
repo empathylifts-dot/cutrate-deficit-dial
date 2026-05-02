@@ -14,16 +14,16 @@ Lead magnet: CutRate Protocol
 
 Paid bridge: Performance Protected Cut
 
-Primary URL target: a short branded URL such as:
+Primary URL target:
 
 ```text
-https://cutrate.ryanschroers.com
+https://cutrate.foreverhabits.com
 ```
 
 Fallback URL:
 
 ```text
-https://deficitdial.ryanschroers.com
+https://cutrate-deficit-dial.netlify.app
 ```
 
 ## Hosting Setup
